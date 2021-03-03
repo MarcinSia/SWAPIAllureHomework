@@ -20,7 +20,7 @@
         <allure-junit5>2.13.6</allure-junit5>
         <allure-rest-assured>2.13.6</allure-rest-assured>
         <allure-maven>2.10.0</allure-maven>
-        <maven-surefire-plugin>3.0.0-M5</maven-surefire-plugin>
+        <maven-surefire-plugin>2.19.1</maven-surefire-plugin>
         <junit-platform-surefire-provider>1.1.0</junit-platform-surefire-provider>
         <junit-jupiter-engine>5.7.1</junit-jupiter-engine>
         <assertj-core>3.19.0</assertj-core>
