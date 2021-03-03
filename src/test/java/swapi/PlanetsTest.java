@@ -15,62 +15,62 @@ import java.util.stream.Stream;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class Starships extends BaseTest {
+public class PlanetsTest extends BaseTest {
 
-    private static Stream<Arguments> readStarshipsData() {
+    private static Stream<Arguments> readPlanetNameData() {
         return Stream.of(
-                Arguments.of("Death Star"),
-                Arguments.of("Calamari Cruiser"),
-                Arguments.of("Slave 1"));
+                Arguments.of("Tatooine"),
+                Arguments.of("Alderaan"),
+                Arguments.of("Naboo"));
     }
 
-    @DisplayName("Read all starships list")
+    @DisplayName("Read all planets")
     @Test
-    public void getAllStarshipsList() {
+    public void getAllPlanets() {
 
         Response response = given()
                 .spec(reqSpec)
                 .when()
-                .get(BASE_URL + "/" + STARSHIPS)
+                .get(BASE_URL + "/" + PLANETS)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .extract()
                 .response();
 
         JsonPath json = response.jsonPath();
-        assertThat(json.getString("count")).isEqualTo("37");
+        assertThat(json.getString("count")).isEqualTo("61");
     }
 
-
-    @DisplayName("Read starship with id = 9")
+    @DisplayName("Read planet with id = 13")
     @Test
-    public void getStarshipWithId() {
+    public void getPlanetWithId() {
 
         Response response = given()
                 .spec(reqSpec)
-                .pathParam("starshipId", 9)
+                .pathParam("planetId",13)
                 .when()
-                .get(BASE_URL + "/" + STARSHIPS + "/" +"{starshipId}")
+                .get(BASE_URL + "/" + PLANETS + "/"+ "{planetId}")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .extract()
                 .response();
 
         JsonPath json = response.jsonPath();
-        assertThat(json.getString("name")).isEqualTo("Death Star");
-        assertThat(json.getString("model")).isEqualTo("DS-1 Orbital Battle Station");
+        assertThat(json.getString("name")).isEqualTo("Mustafar");
+        assertThat(json.getString("climate")).isEqualTo("hot");
+        assertThat(json.getString("terrain")).isEqualTo("volcanoes, lava rivers, mountains, caves");
     }
 
-    @DisplayName("Read starships with given name ")
+    @DisplayName("Read planets with given name")
     @ParameterizedTest(name = "Name: {0}")
-    @MethodSource("readStarshipsData")
-    public void getStarshipWithName(String name) {
+    @MethodSource("readPlanetNameData")
+    public void getPlanetWithName(String name) {
 
         Response response = given()
                 .spec(reqSpec)
                 .queryParam("search", name)
                 .when()
-                .get(BASE_URL + "/" + STARSHIPS)
+                .get(BASE_URL + "/" + PLANETS)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .extract()

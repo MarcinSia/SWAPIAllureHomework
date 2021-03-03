@@ -4,6 +4,7 @@ import base.BaseTest;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,64 +14,63 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
-public class Planets extends BaseTest {
+public class SpeciesTest extends BaseTest {
 
-    private static Stream<Arguments> readPlanetNameData() {
+    private static Stream<Arguments> readSpeciesNameData() {
         return Stream.of(
-                Arguments.of("Tatooine"),
-                Arguments.of("Alderaan"),
-                Arguments.of("Naboo"));
+                Arguments.of("Droid"),
+                Arguments.of("Wookie"),
+                Arguments.of("Hutt"));
     }
 
-    @DisplayName("Read all planets")
+    @DisplayName("Read all species")
     @Test
-    public void getAllPlanets() {
+    public void getAllSpecies() {
 
         Response response = given()
                 .spec(reqSpec)
                 .when()
-                .get(BASE_URL + "/" + PLANETS)
+                .get(BASE_URL + "/" + SPECIES)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .extract()
                 .response();
 
         JsonPath json = response.jsonPath();
-        assertThat(json.getString("count")).isEqualTo("61");
+        assertThat(json.getString("count")).isEqualTo("37");
     }
 
-    @DisplayName("Read planet with id = 13")
+    @DisplayName("Read specie with id = 3")
     @Test
-    public void getPlanetWithId() {
+    public void getSpecieWithId() {
 
         Response response = given()
                 .spec(reqSpec)
-                .pathParam("planetId",13)
+                .pathParam("specieId", 3)
                 .when()
-                .get(BASE_URL + "/" + PLANETS + "/"+ "{planetId}")
+                .get(BASE_URL + "/" + SPECIES + "/{specieId}")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .extract()
                 .response();
 
         JsonPath json = response.jsonPath();
-        assertThat(json.getString("name")).isEqualTo("Mustafar");
-        assertThat(json.getString("climate")).isEqualTo("hot");
-        assertThat(json.getString("terrain")).isEqualTo("volcanoes, lava rivers, mountains, caves");
+        assertThat(json.getString("name")).isEqualTo("Wookiee");
+        assertThat(json.getString("language")).isEqualTo("Shyriiwook");
     }
 
-    @DisplayName("Read planets with given name")
+    @DisplayName("Read species with given name")
     @ParameterizedTest(name = "Name: {0}")
-    @MethodSource("readPlanetNameData")
-    public void getPlanetWithName(String name) {
+    @MethodSource("readSpeciesNameData")
+    public void getSpecieWithName(String name) {
 
         Response response = given()
                 .spec(reqSpec)
                 .queryParam("search", name)
                 .when()
-                .get(BASE_URL + "/" + PLANETS)
+                .get(BASE_URL + "/" + SPECIES)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .extract()
@@ -80,6 +80,4 @@ public class Planets extends BaseTest {
         assertThat(json.getInt("count")).isEqualTo(1);
         assertThat(json.getString("results.name")).contains(name);
     }
-
-
 }
